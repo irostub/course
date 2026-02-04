@@ -1,39 +1,34 @@
 package com.example;
 
 
+import com.example.controller.UserController;
 import com.example.database.DatabaseInitializer;
-import com.example.domain.User;
+import com.example.dto.Request;
+import com.example.dto.Response;
 import com.example.repository.UserRepository;
 import com.example.repository.UserRepositoryImpl;
 import com.example.service.UserService;
-import org.h2.tools.Server;
 
 import java.sql.SQLException;
-import java.util.List;
 
 public class App
 {
     public static void main( String[] args ) throws SQLException {
 //        Server.createWebServer("-web", "-webAllowOthers", "-webPort", "8082").start();
-
         DatabaseInitializer.init();
 
         UserRepository userRepository = new UserRepositoryImpl();
         UserService userService = new UserService(userRepository);
+        UserController userController = new UserController(userService);
 
-        userService.createUser("Alice","alice@gmail.com");
-        userService.createUser("Bob","bob@gmail.com");
+        Request request = new Request();
+        request.setParam("name", "Alice");
+        request.setParam("email", "alice@gmail.com");
+        userController.createUser(request);
 
-        List<User> allUsers = userService.getAllUsers();
-        allUsers.forEach(System.out::println);
-/*
-        while (true) {
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
- */
+        Request request1 = new Request();
+        request1.setParam("id", "1");
+        Response user = userController.getUser(request1);
+        System.out.println(user.getBody());
     }
 }
