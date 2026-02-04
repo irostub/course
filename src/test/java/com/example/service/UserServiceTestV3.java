@@ -10,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -49,6 +50,19 @@ public class UserServiceTestV3 {
         assertTrue(user.isPresent());
         assertEquals("Bob", user.get().getName());
     }
+
+    @Test
+    void getUserByIdWithWrongId() {
+        UserService service = new UserService(mockRepository);
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.getUserById(-1L);
+        });
+        assertThrows(IllegalArgumentException.class, () -> {
+            service.getUserById(null);
+        });
+    }
+
 
     //getAllUsers
     //deleteUser

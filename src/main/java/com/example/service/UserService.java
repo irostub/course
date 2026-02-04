@@ -25,6 +25,12 @@ public class UserService {
             throw new IllegalArgumentException("이름은 최소 2자 이상이어야 합니다.");
         }
 
+        //비즈니스 규칙 : 중복된 이메일 가입은 불가능
+        boolean existsEmail = userRepository.existsByEmail(email);
+        if (existsEmail) {
+            throw new IllegalArgumentException("중복된 이메일로 가입할 수 없습니다.");
+        }
+
         User user = new User(name, email);
         return userRepository.save(user);
     }

@@ -110,4 +110,25 @@ public class UserRepositoryImpl implements UserRepository {
             throw new RuntimeException("사용자 삭제 중 오류 발생", e);
         }
     }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
+
+        try (Connection conn = DatabaseConfig.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, email);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+                return false;
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("이메일 존재 확인 중 오류 발생", e);
+        }
+    }
 }
